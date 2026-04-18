@@ -90,8 +90,8 @@ exports.forgotPassword = async (req, res) => {
 
     await user.save();
 
-    // 🔥 FRONTEND URL (Vercel)
-    const link = `https://password-reset-auth-system.vercel.app/reset-password/${token}`;
+    // 🔥 PRODUCTION FRONTEND URL
+    const link = `${process.env.FRONTEND_URL}/reset-password/${token}`;
 
     await transporter.sendMail({
       to: email,
@@ -134,8 +134,8 @@ exports.resetPassword = async (req, res) => {
     const hash = await bcrypt.hash(password, 10);
 
     user.password = hash;
-    user.resetToken = undefined;
-    user.resetTokenExpiry = undefined;
+    user.resetToken = null;
+    user.resetTokenExpiry = null;
 
     await user.save();
 
