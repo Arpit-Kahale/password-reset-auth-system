@@ -6,28 +6,25 @@ export default function Login() {
   const [data, setData] = useState({ email: "", password: "" });
   const navigate = useNavigate();
 
+  // 🔥 BACKEND URL (CHANGE ONCE HERE)
+  const API = "https://password-reset-auth-system.onrender.com";
+
   const submit = async () => {
-    // ✅ basic validation
     if (!data.email || !data.password) {
       return alert("Please fill all fields");
     }
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/login",
+        `${API}/api/login`,
         data
       );
 
       alert(res.data.msg || "Login successful");
 
-      // 👉 login ke baad (future me dashboard bhi bana sakta hai)
-      // abhi ke liye bas reload ya redirect optional
-      // navigate("/dashboard");
-
     } catch (err) {
       const msg = err.response?.data?.msg;
 
-      // ✅ proper messages from backend
       if (msg === "User not found") {
         alert("Email not registered, please register first");
       } else if (msg === "Incorrect password") {
@@ -39,14 +36,10 @@ export default function Login() {
   };
 
   return (
-    <div
-      className="d-flex justify-content-center align-items-center vh-100"
-      style={{ background: "#f5f7fa" }}
-    >
-      <div
-        className="card shadow p-4"
-        style={{ width: "350px", borderRadius: "12px" }}
-      >
+    <div className="d-flex justify-content-center align-items-center vh-100"
+      style={{ background: "#f5f7fa" }}>
+
+      <div className="card shadow p-4" style={{ width: "350px" }}>
         <h3 className="text-center mb-4">Login</h3>
 
         <input
@@ -67,7 +60,6 @@ export default function Login() {
           Login
         </button>
 
-        {/* Forgot Password */}
         <p
           className="text-center mb-2"
           style={{ cursor: "pointer", color: "#007bff" }}
@@ -76,7 +68,6 @@ export default function Login() {
           Forgot Password?
         </p>
 
-        {/* Register Redirect */}
         <p className="text-center">
           Don't have an account?{" "}
           <span

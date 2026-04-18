@@ -3,18 +3,23 @@ const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 
+// ================= EMAIL CONFIG =================
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
     user: process.env.EMAIL,
-    pass: process.env.PASSWORD
-  }
+    pass: process.env.PASSWORD,
+  },
 });
 
 // ================= REGISTER =================
 exports.register = async (req, res) => {
   try {
     const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ msg: "All fields are required" });
+    }
 
     const exists = await User.findOne({ email });
 
@@ -29,6 +34,7 @@ exports.register = async (req, res) => {
     res.status(201).json({ msg: "Registered successfully" });
 
   } catch (error) {
+    console.log(error);
     res.status(500).json({ msg: "Server error" });
   }
 };
@@ -37,6 +43,10 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ msg: "All fields are required" });
+    }
 
     const user = await User.findOne({ email });
 
@@ -53,6 +63,7 @@ exports.login = async (req, res) => {
     res.json({ msg: "Login successful" });
 
   } catch (error) {
+    console.log(error);
     res.status(500).json({ msg: "Server error" });
   }
 };
@@ -61,6 +72,10 @@ exports.login = async (req, res) => {
 exports.forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ msg: "Email required" });
+    }
 
     const user = await User.findOne({ email });
 
@@ -71,25 +86,28 @@ exports.forgotPassword = async (req, res) => {
     const token = crypto.randomBytes(32).toString("hex");
 
     user.resetToken = token;
-    user.resetTokenExpiry = Date.now() + 10 * 60 * 1000;
+    user.resetTokenExpiry = Date.now() + 10 * 60 * 1000; // 10 min
 
     await user.save();
 
-    // 🔥 IMPORTANT FIX (DEPLOYED FRONTEND URL)
+    // 🔥 FRONTEND URL (Vercel)
     const link = `https://password-reset-auth-system.vercel.app/reset-password/${token}`;
 
     await transporter.sendMail({
       to: email,
       subject: "Reset Password",
       html: `
+        <h3>Password Reset Request</h3>
         <p>Click below to reset your password:</p>
-        <a href="${link}">Reset Password</a>
-      `
+        <a href="${link}">${link}</a>
+        <p>This link will expire in 10 minutes.</p>
+      `,
     });
 
     res.json({ msg: "Reset link sent to email" });
 
   } catch (error) {
+    console.log(error);
     res.status(500).json({ msg: "Server error" });
   }
 };
@@ -100,9 +118,13 @@ exports.resetPassword = async (req, res) => {
     const { token } = req.params;
     const { password } = req.body;
 
+    if (!password) {
+      return res.status(400).json({ msg: "Password required" });
+    }
+
     const user = await User.findOne({
       resetToken: token,
-      resetTokenExpiry: { $gt: Date.now() }
+      resetTokenExpiry: { $gt: Date.now() },
     });
 
     if (!user) {
@@ -120,6 +142,7 @@ exports.resetPassword = async (req, res) => {
     res.json({ msg: "Password updated successfully" });
 
   } catch (error) {
+    console.log(error);
     res.status(500).json({ msg: "Server error" });
   }
 };

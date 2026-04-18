@@ -9,41 +9,39 @@ export default function ResetPassword() {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
 
+  // 🔥 SAME BASE URL
+  const API = "https://password-reset-auth-system.onrender.com";
+
   const submit = async () => {
+    if (!password || !confirm) {
+      return alert("Please fill all fields");
+    }
+
     if (password !== confirm) {
       return alert("Passwords do not match");
     }
 
     try {
       const res = await axios.post(
-        `http://localhost:5000/api/reset-password/${token}`,
+        `${API}/api/reset-password/${token}`,
         { password }
       );
 
-      alert(res.data.msg || "Password Updated");
+      alert(res.data.msg || "Password updated successfully");
 
-      // 👉 login pe redirect
       navigate("/login");
 
     } catch (err) {
-      alert(err.response?.data?.msg || "Error");
+      alert(err.response?.data?.msg || "Error occurred");
     }
   };
 
   return (
-    <div
-      className="d-flex justify-content-center align-items-center vh-100"
-      style={{ background: "#f5f7fa" }}
-    >
-      <div
-        className="card shadow p-4"
-        style={{ width: "350px", borderRadius: "12px" }}
-      >
-        <h3 className="text-center mb-4">Reset Password</h3>
+    <div className="d-flex justify-content-center align-items-center vh-100"
+      style={{ background: "#f5f7fa" }}>
 
-        <p className="text-muted text-center" style={{ fontSize: "14px" }}>
-          Enter your new password below
-        </p>
+      <div className="card shadow p-4" style={{ width: "350px" }}>
+        <h3 className="text-center mb-4">Reset Password</h3>
 
         <input
           type="password"
@@ -63,7 +61,6 @@ export default function ResetPassword() {
           Reset Password
         </button>
 
-        {/* Back to Login */}
         <p
           className="text-center"
           style={{ cursor: "pointer", color: "#007bff" }}

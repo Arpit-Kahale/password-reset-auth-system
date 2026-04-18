@@ -6,10 +6,17 @@ export default function ForgotPassword() {
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
 
+  // 🔥 BACKEND URL (CHANGE ONCE HERE)
+  const API = "https://password-reset-auth-system.onrender.com";
+
   const submit = async () => {
+    if (!email) {
+      return alert("Please enter email");
+    }
+
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/forgot-password",
+        `${API}/api/forgot-password`,
         { email }
       );
 
@@ -25,15 +32,8 @@ export default function ForgotPassword() {
       className="d-flex justify-content-center align-items-center vh-100"
       style={{ background: "#f5f7fa" }}
     >
-      <div
-        className="card shadow p-4"
-        style={{ width: "350px", borderRadius: "12px" }}
-      >
+      <div className="card shadow p-4" style={{ width: "350px" }}>
         <h3 className="text-center mb-4">Forgot Password</h3>
-
-        <p className="text-muted text-center" style={{ fontSize: "14px" }}>
-          Enter your email to receive a password reset link
-        </p>
 
         <input
           type="email"
@@ -46,7 +46,6 @@ export default function ForgotPassword() {
           Send Reset Link
         </button>
 
-        {/* Back to Login */}
         <p
           className="text-center"
           style={{ cursor: "pointer", color: "#007bff" }}

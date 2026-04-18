@@ -6,8 +6,8 @@ export default function Register() {
   const [data, setData] = useState({ email: "", password: "" });
   const navigate = useNavigate();
 
-  // 🔥 BACKEND BASE URL (CHANGE THIS ONLY HERE)
-  const API = "https://YOUR-BACKEND.onrender.com";
+  // 🔥 ONE CENTRAL API URL
+  const API = "https://password-reset-auth-system.onrender.com";
 
   const submit = async () => {
     if (!data.email || !data.password) {
@@ -37,14 +37,10 @@ export default function Register() {
   };
 
   return (
-    <div
-      className="d-flex justify-content-center align-items-center vh-100"
-      style={{ background: "#f5f7fa" }}
-    >
-      <div
-        className="card shadow p-4"
-        style={{ width: "350px", borderRadius: "12px" }}
-      >
+    <div className="d-flex justify-content-center align-items-center vh-100"
+      style={{ background: "#f5f7fa" }}>
+
+      <div className="card shadow p-4" style={{ width: "350px" }}>
         <h3 className="text-center mb-4">Register</h3>
 
         <input
