@@ -6,11 +6,19 @@ const connectDB = require("./config/db");
 
 const app = express();
 
+// DB connect
 connectDB();
 
+// Middlewares
 app.use(cors());
 app.use(express.json());
 
+// Routes
 app.use("/api", require("./routes/auth"));
 
-app.listen(5000, () => console.log("Server running on 5000"));
+// 🔥 IMPORTANT FIX FOR DEPLOYMENT
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
