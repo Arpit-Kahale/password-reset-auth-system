@@ -6,27 +6,27 @@ export default function Register() {
   const [data, setData] = useState({ email: "", password: "" });
   const navigate = useNavigate();
 
+  // 🔥 BACKEND BASE URL (CHANGE THIS ONLY HERE)
+  const API = "https://YOUR-BACKEND.onrender.com";
+
   const submit = async () => {
-    // ✅ basic validation
     if (!data.email || !data.password) {
       return alert("Please fill all fields");
     }
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/register",
+        `${API}/api/register`,
         data
       );
 
       alert(res.data.msg || "Registered successfully");
 
-      // 👉 success ke baad login page
       navigate("/login");
 
     } catch (err) {
       const msg = err.response?.data?.msg;
 
-      // ✅ UPDATED MESSAGE MATCH
       if (msg === "User already registered") {
         alert("User already registered, please login");
         navigate("/login");
@@ -65,7 +65,6 @@ export default function Register() {
           Register
         </button>
 
-        {/* 🔗 Navigation */}
         <p className="text-center">
           Already have an account?{" "}
           <span

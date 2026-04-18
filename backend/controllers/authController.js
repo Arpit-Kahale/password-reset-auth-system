@@ -11,7 +11,7 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-// ✅ REGISTER
+// ================= REGISTER =================
 exports.register = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -33,26 +33,23 @@ exports.register = async (req, res) => {
   }
 };
 
-// ✅ LOGIN
+// ================= LOGIN =================
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
 
-    // ❌ Email not found
     if (!user) {
       return res.status(400).json({ msg: "User not found" });
     }
 
     const match = await bcrypt.compare(password, user.password);
 
-    // ❌ Wrong password
     if (!match) {
       return res.status(400).json({ msg: "Incorrect password" });
     }
 
-    // ✅ Success
     res.json({ msg: "Login successful" });
 
   } catch (error) {
@@ -60,7 +57,7 @@ exports.login = async (req, res) => {
   }
 };
 
-// ✅ FORGOT PASSWORD
+// ================= FORGOT PASSWORD =================
 exports.forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
@@ -78,13 +75,16 @@ exports.forgotPassword = async (req, res) => {
 
     await user.save();
 
-    const link = `http://localhost:3000/reset-password/${token}`;
+    // 🔥 IMPORTANT FIX (DEPLOYED FRONTEND URL)
+    const link = `https://password-reset-auth-system.vercel.app/reset-password/${token}`;
 
     await transporter.sendMail({
       to: email,
       subject: "Reset Password",
-      html: `<p>Click below to reset your password:</p>
-             <a href="${link}">${link}</a>`
+      html: `
+        <p>Click below to reset your password:</p>
+        <a href="${link}">Reset Password</a>
+      `
     });
 
     res.json({ msg: "Reset link sent to email" });
@@ -94,7 +94,7 @@ exports.forgotPassword = async (req, res) => {
   }
 };
 
-// ✅ RESET PASSWORD
+// ================= RESET PASSWORD =================
 exports.resetPassword = async (req, res) => {
   try {
     const { token } = req.params;
